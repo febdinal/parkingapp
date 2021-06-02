@@ -1,29 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+@extends('layout/master')
+
+@section('content')
 <h3> Form Keluar Parkir </h3>
 <fieldset>
-        <p> {{ $parkir->petugas }} </p>
-        <p> {{ $parkir->type_kendaraan }} </p>
-        <p> {{ $parkir->waktu_masuk }} </p>
-        <form action="{{ route('parkir.store') }}" method="POST">        
-        @csrf
+        <p> Nota: {{ $parkir->nota }} </p>
+        <p> Nama Petugas: {{ $parkir->petugas }} </p>
+        <p> Tipe kendaraan: {{ $parkir->type_kendaraan }} </p>
+        <p> Masuk: {{ $parkir->waktu_masuk }} </p>
+        <form action="{{ route('parkir.update', $parkir->nota) }}" method="POST">
+            @method('PUT')        
+            @csrf
             <ul>
                 <li>
                     <label for="keluar"> Masukan Waktu Keluar :</label>
-                    <input type="dateTime-local" name="keluar" id="keluar" required>
+                    {{-- <input type="dateTime-local" name="keluar" id="keluar" required> --}}
                 </li>
                 <li>
-                    <button type="submit" name="submit"> Buat </button>
+                    <button type="submit" name="submit"> Keluar </button>
                 </li>
             </ul>
         </form>
 </fieldset>
-</body>
-</html>
+@endsection

@@ -15,11 +15,7 @@ use App\Http\Controllers\ParkirController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 Route::resource('/parkir', ParkirController::class);
-
-
-
-?>

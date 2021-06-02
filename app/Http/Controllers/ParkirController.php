@@ -15,7 +15,8 @@ class ParkirController extends Controller
      */
     public function index()
     {
-        
+        $parkirs = Parkir::with(['kendaraan'])->get();
+        return view('parkir.index', compact('parkirs'));
     }
 
     /**
@@ -26,8 +27,8 @@ class ParkirController extends Controller
     public function create()
     {
         $parkir = Parkir::all();
-        $vehicles = KategoriKendaraan::Orderby('nama')->pluck('nama','id');
-        return view('parkir.create', compact('parkir' ,'vehicles'));
+        $kendaraan = KategoriKendaraan::Orderby('nama')->pluck('nama','id');
+        return view('parkir.create', compact('parkir' ,'kendaraan'));
     }
 
     /**
@@ -44,7 +45,7 @@ class ParkirController extends Controller
             'type_kendaraan'    => $request->kendaraan,
             'waktu_masuk'       => $request->waktu,
         ]);
-        return redirect()->route('parkir.create');
+        return redirect()->route('parkir.index');
         }
 
     /**
@@ -56,7 +57,7 @@ class ParkirController extends Controller
     public function show($nota)
     {
         $parkir = Parkir::where('nota', $nota)->first();
-        return view('parkir.show' ,compact('parkir'));
+        return view('parkir.show', compact('parkir'));
     }
 
     /**
@@ -65,9 +66,10 @@ class ParkirController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($nota)
     {
-        //
+
+
     }
 
     /**
@@ -77,9 +79,13 @@ class ParkirController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $nota)
     {
-        //
+        $parkir = Parkir::where('nota', $nota)->first();
+        $parkir->update([
+            'waktu_keluar'  => \Carbon\Carbon::now()
+        ]);
+        return redirect()->route('parkir.index');
     }
 
     /**

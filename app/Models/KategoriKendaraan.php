@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class KategoriKendaraan extends Model
 {
     use HasFactory;
-    
-    protected $guarded  = [''];
 
-    public function Parkir(){
+    protected $guarded = [''];
+
+    public function parkir() {
         return $this->hasMany(Parkir::class);
     }
 }
