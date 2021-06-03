@@ -24,6 +24,7 @@
     <th>Waktu Keluar</th>
     <th>Durasi Parkir</th>
     <th>Keuntungan</th>
+    <th>Total Harga</th>
     <th>Aksi</th>
   </tr>
   @foreach ($parkirs as $parkir )
@@ -42,6 +43,7 @@
           echo $durasi_parkir->format('%h');
         ?>
       </td>
+      <td>Rp. {{ $parkir->keuntungan }}</td>
       <td>Rp. {{ $parkir->total_harga }}</td>
       <td>
         <a href={{url('/parkir/' . $parkir->nota )}}>Keluar</a>

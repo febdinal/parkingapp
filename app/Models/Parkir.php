@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Parkir extends Model
 {
@@ -13,33 +14,55 @@ class Parkir extends Model
 
     public $timestamps = false;
 
-    protected $appends = ['total_harga'];
+    protected $appends = ['total_harga', 'keuntungan'];
 
-    public function kendaraan(){
+    public function kendaraan()
+    {
         return $this->belongsTo(KategoriKendaraan::class, 'type_kendaraan', 'nama');
     }
 
-    function dateIntervalToSeconds($interval)
+    public function getTotalHargaAttribute() 
     {
-        $seconds = $interval->days*86400 + $interval->h*3600 
-        + $interval->i*60 + $interval->s;
-        return $interval->invert == 1 ? $seconds*(-1) : $seconds;
+        if (! $this->waktu_keluar) {
+            return;
+        }
+        
+        $waktu_masuk    = Carbon::parse($this->waktu_masuk);
+
+        $waktu_keluar   = Carbon::parse($this->waktu_keluar);
+
+        $durasi_parkir  = $waktu_masuk->diffInMinutes($waktu_keluar);
+
+        $durasi_parkir = $this->getParkingDurationOnHours($durasi_parkir);
+
+        return $this->kendaraan->harga * $durasi_parkir;
     }
 
-    public function getTotalHargaAttribute() {
-        if($this->waktu_keluar !== null) {
-            $waktu_masuk    = new \DateTime($this->waktu_masuk);
-            $waktu_keluar   = new \DateTime($this->waktu_keluar);
-            $durasi_parkir  = $waktu_masuk->diff($waktu_keluar);
-            // dd($durasi_parkir->format('%h'));
-            // return $durasi_parkir->format('%h');
-            if($this->dateIntervalToSeconds($durasi_parkir) > 1000) {
-                return "1";
-            } else {
-                return $this->kendaraan->harga;
-            }
-        } else {
-            return "";
+    public function getKeuntunganAttribute()
+    {
+        return ($this->total_harga * $this->kendaraan->keuntungan) / 100;
+    }
+
+    public function getParkingDurationOnHours($parkingDurationOnMinute)
+    {
+        if (! ($parkingDurationOnMinute > 60)) {
+            return 1;
+        } 
+        
+        return $this->minusSixty($parkingDurationOnMinute, 0);
+        
+    }
+
+    public function minusSixty($minute, $currentCount = 0)
+    {
+        $minute -= 60;
+
+        $currentCount += 1;
+
+        if ($minute > 0) {
+            $this->minusSixty($minute, $currentCount);
         }
+
+        return $currentCount;
     }
 }
